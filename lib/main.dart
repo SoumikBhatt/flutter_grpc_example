@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
       home: BlocProvider(
         create: (context) => UserBloc(
           repository: UserRepoImpl(
-            ApiClient(baseUrl: '192.168.0.205', port: 8080),
+            ApiClient(baseUrl: '10.200.10.150', port: 8080),
+            FemtoClient(baseUrl: '10.200.10.170', port: 50051),
           ),
         )..add(FetchUserListEvent()),
         child: const UserListPage(),

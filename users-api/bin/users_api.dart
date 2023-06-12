@@ -1,4 +1,3 @@
-import 'package:grpc/grpc.dart';
 import 'package:users_api/users_api.dart';
 
 class UserService extends UserServiceBase {

@@ -7,12 +7,14 @@ class UserState extends Equatable {
   final List<User> users;
   final User? user;
   final String errorMsg;
+  final RabbitMQResponse? rabbitMQResponse;
 
   const UserState({
     this.state = UiState.loading,
     this.users = const <User>[],
     this.errorMsg = "",
-    this.user
+    this.user,
+    this.rabbitMQResponse,
   });
 
   UserState copyWith({
@@ -20,17 +22,19 @@ class UserState extends Equatable {
     List<User>? users,
     String? errorMsg,
     User? user,
+    RabbitMQResponse? rabbitMQResponse
 }) {
     return UserState(
       state: state,
       users: users??this.users,
       errorMsg: errorMsg??this.errorMsg,
-      user: user
+      user: user,
+      rabbitMQResponse: rabbitMQResponse,
     );
   }
 
   @override
-  List<Object?> get props => [state,users,errorMsg,user];
+  List<Object?> get props => [state,users,errorMsg,user,rabbitMQResponse];
 
 }
 

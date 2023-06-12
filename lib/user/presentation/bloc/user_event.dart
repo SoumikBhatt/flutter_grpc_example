@@ -17,3 +17,14 @@ class FetchUserByIdEvent extends UserEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class SendRabbitMQMessageEvent extends UserEvent {
+  final String message;
+
+  const SendRabbitMQMessageEvent({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+
+
+}

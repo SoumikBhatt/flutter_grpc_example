@@ -4,8 +4,9 @@ import 'package:users_api/users_api.dart';
 
 class UserRepoImpl extends IUserRepo {
   final ApiClient _apiClient;
+  final FemtoClient _femtoClient;
 
-  UserRepoImpl(this._apiClient);
+  UserRepoImpl(this._apiClient, this._femtoClient);
 
   @override
   Future<Resource<List<User>>?> getUsers() async {
@@ -29,6 +30,17 @@ class UserRepoImpl extends IUserRepo {
       return Resource.success(user);
     } catch (error) {
       print('UserRepoImpl.getUsers: $error');
+      return Resource.error(error.toString(), 1);
+    }
+  }
+
+  @override
+  Future<Resource<RabbitMQResponse>?> rabbitMqResponse(String message) async{
+    try {
+      final response = await _femtoClient.sendRabbitMQMessage(message: message);
+      return Resource.success(response);
+    } catch(error) {
+      print('UserRepoImpl.rabbitMqResponse: $error');
       return Resource.error(error.toString(), 1);
     }
   }

@@ -19,19 +19,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         super(const UserState()) {
     on<FetchUserListEvent>(_fetchUserList);
     on<FetchUserByIdEvent>(_fetchUserById);
+    on<SendRabbitMQMessageEvent>(_sendRabbitMqMessage);
   }
 
-  FutureOr<void> _fetchUserList(FetchUserListEvent event, Emitter<UserState> emit) async {
+  FutureOr<void> _fetchUserList(
+      FetchUserListEvent event, Emitter<UserState> emit) async {
     emit(state.copyWith(state: UiState.loading));
 
     var resource = await _repository.getUsers();
 
-    switch(resource?.status) {
+    switch (resource?.status) {
       case Status.success:
-        emit(state.copyWith(state: UiState.success,users: resource?.data));
+        emit(state.copyWith(state: UiState.success, users: resource?.data));
         break;
       case Status.failed:
-        emit(state.copyWith(state: UiState.failed,errorMsg: resource?.message));
+        emit(
+            state.copyWith(state: UiState.failed, errorMsg: resource?.message));
         break;
       case Status.loading:
       default:
@@ -40,17 +43,41 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  FutureOr<void> _fetchUserById(FetchUserByIdEvent event, Emitter<UserState> emit) async {
+  FutureOr<void> _fetchUserById(
+      FetchUserByIdEvent event, Emitter<UserState> emit) async {
     emit(state.copyWith(state: UiState.loading));
 
     var resource = await _repository.getUsersById(event.id);
 
-    switch(resource?.status) {
+    switch (resource?.status) {
       case Status.success:
-        emit(state.copyWith(state: UiState.success,user: resource?.data));
+        emit(state.copyWith(state: UiState.success, user: resource?.data));
         break;
       case Status.failed:
-        emit(state.copyWith(state: UiState.failed,errorMsg: resource?.message));
+        emit(
+            state.copyWith(state: UiState.failed, errorMsg: resource?.message));
+        break;
+      case Status.loading:
+      default:
+        emit(state.copyWith(state: UiState.loading));
+        break;
+    }
+  }
+
+  FutureOr<void> _sendRabbitMqMessage(
+      SendRabbitMQMessageEvent event, Emitter<UserState> emit) async {
+    emit(state.copyWith(state: UiState.loading));
+    var resource = await _repository.rabbitMqResponse(event.message);
+
+    switch (resource?.status) {
+      case Status.success:
+        print('UserBloc._sendRabbitMqMessage: ${resource?.data?.messageSent}');
+        emit(state.copyWith(
+            state: UiState.success, rabbitMQResponse: resource?.data));
+        break;
+      case Status.failed:
+        emit(
+            state.copyWith(state: UiState.failed, errorMsg: resource?.message));
         break;
       case Status.loading:
       default:

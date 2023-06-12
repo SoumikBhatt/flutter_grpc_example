@@ -31,21 +31,21 @@ class UserListBody extends StatelessWidget {
           return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
             return ListTile(
-              title: Text(state.users[index].name ?? ""),
-              subtitle: Text(state.users[index].email ?? ""),
+              title: Text(state.users[index].name),
+              subtitle: Text(state.users[index].email),
+              onTap: (){
+                context.read<UserBloc>().add(const SendRabbitMQMessageEvent(message: "Hello from Client"));
+              },
             );
           },itemCount: state.users.length,);
-          break;
         case UiState.loading:
           return const Center(
             child: CircularProgressIndicator(),
           );
-          break;
         case UiState.failed:
           return Center(
             child: Text(state.errorMsg),
           );
-          break;
       }
     });
   }
